@@ -1,12 +1,18 @@
 package lib;
 
 import io.appium.java_client.android.AndroidDriver;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import pages.BasePage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,7 +27,7 @@ public class BaseTestClass {
     public static String appPackage;
     public static String appActivity;
     protected static Properties properties;
-    public static final Logger logger = Logger.getLogger(BaseTestClass.class);
+    protected static Logger logger = Logger.getInstance();
 
     @BeforeClass
     public static void openUrl() throws MalformedURLException {
@@ -55,8 +61,51 @@ public class BaseTestClass {
         }
         appiumUrl = properties.getProperty("appiumUrl");
         appPath = properties.getProperty("appPath");
+        appPath = new File("").getAbsolutePath() + appPath;
         appPackage = properties.getProperty("appPackage");
         appActivity = properties.getProperty("appActivity");
     }
+
+    public void assertEquals(String messageOK, String messageWrong, final Object expected, final Object actual) {
+        if (!expected.equals(actual)) {
+            logger.fatal(messageWrong + ", Expected value: '" + expected + "', but was: '" + actual
+                    + "'");
+        } else {
+            logger.info(messageOK + " ...OK");
+        }
+    }
+
+    @ClassRule
+    public static TestRule classWatcher = new TestRule() {
+        public Statement apply(final Statement base, final Description description) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    logger.info(description.getDisplayName() + " class started");
+                    base.evaluate();
+                    logger.info(description.getDisplayName() + " class finished");
+                }
+            };
+        }
+    };
+
+    @Rule
+    public TestRule watchman = new TestWatcher() {
+        public Statement apply(final Statement base, final Description description) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    try {
+                        logger.info(description.getDisplayName() + " test started");
+                        base.evaluate();
+                        logger.info(description.getDisplayName() + ": was succesfull");
+                    } catch (Throwable t) {
+                        logger.error(description.getDisplayName() + ": failed");
+                        throw t;
+                    }
+                }
+            };
+        }
+    };
 
 }

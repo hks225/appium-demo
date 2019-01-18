@@ -1,5 +1,4 @@
 import lib.BaseTestClass;
-import org.junit.Assert;
 import org.junit.Test;
 import pages.FormulaPage;
 import pages.LandingPage;
@@ -18,7 +17,7 @@ public class SmokeTestClass extends BaseTestClass {
         .setPistonStroke("10")
         .clickOnCalculateButton();
         String resultText = formulaPage.getCalculationsText();
-        Assert.assertEquals("Wrong result",
+        assertEquals("Check of result", "Wrong result",
                 "79.53981633974483", resultText);
     }
 
