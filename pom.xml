@@ -7,33 +7,110 @@
     <groupId>appiumexample</groupId>
     <artifactId>appiumexample</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>7</source>
-                    <target>7</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <!-- Стопает билд, если он был стопнут в CI, но из-за этой опции не создаются скриншоты для отчета.
+                     Пока закомменчу -->
+                    <!-- <forkMode>never</forkMode> -->
+                    <systemPropertyVariables>
+                        <aqa.locale>ru</aqa.locale>
+                        <!-- Искейпить ли выводимый текст из логов репорт -->
+                        <org.uncommons.reportng.escape-output>false</org.uncommons.reportng.escape-output>
+                        <!-- Название отчета, которое будет видно на главной странице индекса -->
+                        <org.uncommons.reportng.title>EMIAS-Auto</org.uncommons.reportng.title>
+                        <!-- Запускать ли анализатор падения кейса (поиск в тексте страницы
+                            на момент падения заранее оговоренного текста с выбрасыванием кастомного
+                            исключения) -->
+                        <org.uncommons.reportng.invoke-analyz>false</org.uncommons.reportng.invoke-analyz>
+                        <!-- Список возможных исключений, которые оговариваются вручную -->
+                        <org.uncommons.reportng.analyz>DATA_ERROR,SERVER_ERROR,ELEMENT_ABSENT,UNKNOWN_ERROR</org.uncommons.reportng.analyz>
+                        <!-- Попытка сгенерировать результат тестов в эксель файл (может не
+                            отработать) -->
+                        <org.uncommons.reportng.excel-report>false</org.uncommons.reportng.excel-report>
+                        <!-- Название фолдера для генерации кастомного репорта -->
+                        <org.uncommons.reportng.custom-report-dir>report</org.uncommons.reportng.custom-report-dir>
+                        <!-- Выводить ли скриншот после открытия каждой формы в отчет -->
+                        <org.uncommons.reportng.everystepscreen>true</org.uncommons.reportng.everystepscreen>
+                        <!-- Один из вариантов генерации репорта, генерация только блока с
+                            зафейлеными тестами -->
+                        <org.uncommons.reportng.create-only-fails-report>true</org.uncommons.reportng.create-only-fails-report>
+                        <!-- Урл к логотипу для отчета (левый верхний угол) -->
+                        <org.uncommons.reportng.logo>http://www.osp.ru/FileStorage/ARTICLE/Centry_kompetencij/2012-08/IT_v_zdravoohranenii/13129597/Centry_kompetencij_emias_(1047).jpg</org.uncommons.reportng.logo>
+                        <!-- Попытка отсортировать выводимые тесты по алфавиту (работает только
+                            если есть цифровая метка в названии классов) -->
+                        <org.uncommons.reportng.shouldorder>false</org.uncommons.reportng.shouldorder>
+                        <org.uncommons.reportng.convert-steps-text>true</org.uncommons.reportng.convert-steps-text>
+                    </systemPropertyVariables>
+                    <!--  <suiteXmlFiles>${file}</suiteXmlFiles>-->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/${suite}.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <!--  <parallel>suites</parallel>
+          			<threadCount>10</threadCount>-->
+                    <!-- <suiteXmlFile>src/test/resources/${suite}.xml</suiteXmlFile> -->
+                    <skipTests>false</skipTests>
+                    <properties>
+                        <property>
+                            <name>suitethreadpoolsize</name>
+                            <value>${threads}</value>
+                        </property>
+                        <property>
+                            <name>usedefaultlisteners</name>
+                            <value>false</value>
+                        </property>
+                        <property>
+                            <name>listener</name>
+                            <value>org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter,com.demohoster.listener.ReportingApiListener</value>
+                        </property>
+                    </properties>
+                    <workingDirectory>target/</workingDirectory>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <aspectj.version>1.9.2</aspectj.version>
+        <allure.version>2.6.0</allure.version>
+        <threads>10</threads>
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.junit</groupId>
-            <artifactId>junit-bom</artifactId>
-            <version>5.2.0</version>
-            <type>pom</type>
-        </dependency>
 
         <dependency>
             <groupId>io.appium</groupId>
@@ -62,9 +139,18 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-testng</artifactId>
-            <version>2.6.0</version>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.14.3</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
+
 
 </project>

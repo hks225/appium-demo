@@ -1,15 +1,9 @@
 package lib;
 
 import io.appium.java_client.android.AndroidDriver;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import pages.BasePage;
 
 import java.io.File;
@@ -74,7 +68,7 @@ public class BaseTestClass {
             logger.info(messageOK + " ...OK");
         }
     }
-
+/*
     @ClassRule
     public static TestRule classWatcher = new TestRule() {
         public Statement apply(final Statement base, final Description description) {
@@ -107,5 +101,5 @@ public class BaseTestClass {
             };
         }
     };
-
+*/
 }

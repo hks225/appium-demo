@@ -1,0 +1,5 @@
+com.example.hks.compressionratio
+com.example.hks.compressionratio.MainActivity
+
+adb shell pm list packages
+adb shell dumpsys window windows

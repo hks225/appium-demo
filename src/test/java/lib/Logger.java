@@ -1,7 +1,7 @@
 package lib;
 
 import io.qameta.allure.Step;
-import org.testng.Assert;
+import org.junit.Assert;
 
 public class Logger {
 
@@ -43,7 +43,7 @@ public class Logger {
     @Step("FATAL - {message}")
     public void fatal(String message) {
         logger.fatal(message);
-        Assert.assertTrue(false, message);
+        Assert.assertTrue(message, false);
     }
 
 }

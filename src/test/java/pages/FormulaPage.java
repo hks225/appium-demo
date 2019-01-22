@@ -1,6 +1,7 @@
 package pages;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import lib.elements.Button;
 import lib.elements.Label;
 import lib.elements.TextBox;
@@ -33,6 +34,14 @@ public class FormulaPage extends BasePage {
 
     public FormulaPage setCombustionChamberVolume(String volume) {
         combustionChamberVolumeInput.setText(volume);
+        return this;
+    }
+
+    @Step("fillFormulaForm {0} {1} {2}")
+    public FormulaPage fillFormulaForm(String diameter, String pistonStroke, String volume) {
+        setCylinderDiameter(diameter);
+        setPistonStroke(pistonStroke);
+        setCombustionChamberVolume(volume);
         return this;
     }
 

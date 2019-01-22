@@ -1,5 +1,7 @@
+import io.qameta.allure.Description;
 import lib.BaseTestClass;
-import org.junit.Test;
+
+import org.testng.annotations.Test;
 import pages.FormulaPage;
 import pages.LandingPage;
 
@@ -9,12 +11,11 @@ public class SmokeTestClass extends BaseTestClass {
     private FormulaPage formulaPage;
 
     @Test
+    @Description("Smoke test")
     public void smokeTest() {
         landingPage = new LandingPage(driver);
         formulaPage = landingPage.clickOnFormulaButton();
-        formulaPage.setCylinderDiameter("10")
-        .setCombustionChamberVolume("10")
-        .setPistonStroke("10")
+        formulaPage.fillFormulaForm("10", "10", "10")
         .clickOnCalculateButton();
         String resultText = formulaPage.getCalculationsText();
         assertEquals("Check of result", "Wrong result",
