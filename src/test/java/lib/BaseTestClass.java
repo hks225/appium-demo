@@ -37,8 +37,6 @@ public class BaseTestClass {
 
         driver = new AndroidDriver(new URL(appiumUrl), capabilities);
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        BasePage page = new BasePage(driver);
-        page.setDriver(driver);
     }
 
     @AfterClass
